@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key key}) : super(key: key);
@@ -81,10 +83,13 @@ class _CameraPageState extends State<CameraPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera),
         onPressed: () async {
-          image = await controller.takePicture();
-          setState(() {
-            _url = image.path;
-          });
+          final path = join(
+              (await getTemporaryDirectory()).path, '${DateTime.now()}.png');
+          await controller.takePicture(path).then((res) => {
+                setState(() {
+                  _url = path;
+                })
+              });
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
